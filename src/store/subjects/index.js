@@ -12,7 +12,10 @@ const module = {
     loadingTopics: false,
     topics: [],
 
-    loadingStartPoint: false
+    loadingStartPoint: false,
+
+    answers: [],
+    loadingAnswers: false
   },
 
   actions: {
@@ -40,16 +43,38 @@ const module = {
 
         commit('SET_SUBJECT', response.data.subject)
 
-        router.push({
-          name: 'due-diligence-query',
-          params: {
-            id: response.data.subject.id
-          }
-        })
+        if (response.data.completed) {
+          router.push({
+            name: 'due-diligence-query-summary'
+          })
+        } else {
+          router.push({
+            name: 'due-diligence-query',
+            params: {
+              id: response.data.subject.id
+            }
+          })
+        }
       } catch (error) {
         console.log(error.response)
       } finally {
         commit('SET_SUBMITTING_ANSWER', false)
+      }
+    },
+
+    async saveAndReturnLatern({
+      commit
+    }, payload) {
+      try {
+        const response = await subjectAPI.submitAnswer(payload)
+
+        commit('SET_SUBJECT', response.data.subject)
+
+        router.push({
+          name: 'start-query'
+        })
+      } catch (error) {
+        console.log(error.response)
       }
     },
 
@@ -68,6 +93,21 @@ const module = {
       }
     },
 
+    async getAllTopics({
+      commit
+    }) {
+      commit('SET_LOADING_TOPICS', true)
+      try {
+        const response = await subjectAPI.getAllTopics()
+
+        commit('SET_TOPICS', response.data.categories)
+      } catch (error) {
+        console.log(error.response)
+      } finally {
+        commit('SET_LOADING_TOPICS', false)
+      }
+    },
+
     async getStartingPoint({
       commit
     }) {
@@ -75,16 +115,52 @@ const module = {
       try {
         const response = await subjectAPI.getStartingPoint()
 
-        router.push({
-          name: 'due-diligence-query',
-          params: {
-            id: response.data.subject_id
-          }
-        })
+        if (response.data.completed) {
+          router.push({
+            name: 'due-diligence-query-summary'
+          })
+        } else {
+          router.push({
+            name: 'due-diligence-query',
+            params: {
+              id: response.data.subject_id
+            }
+          })
+        }
       } catch (error) {
         console.log(error.response)
       } finally {
         commit('SET_LOADING_START', false)
+      }
+    },
+
+    async getAnswers({
+      commit
+    }) {
+      commit('SET_LOADING_ANSWERS', true)
+      try {
+        const response = await subjectAPI.getAnswers()
+
+        commit('SET_ANSWERS', response.data.answers)
+      } catch (error) {
+        console.log(error.response)
+      } finally {
+        commit('SET_LOADING_ANSWERS', false)
+      }
+    },
+
+    async getCompanyAnswers({
+      commit
+    }, id) {
+      commit('SET_LOADING_ANSWERS', true)
+      try {
+        const response = await subjectAPI.getCompanyAnswers(id)
+
+        commit('SET_ANSWERS', response.data.answers)
+      } catch (error) {
+        console.log(error.response)
+      } finally {
+        commit('SET_LOADING_ANSWERS', false)
       }
     }
   },
@@ -112,6 +188,14 @@ const module = {
 
     SET_LOADING_START(state, loading) {
       state.loadingStartPoint = loading
+    },
+
+    SET_LOADING_ANSWERS(state, loading) {
+      state.loadingAnswers = loading
+    },
+
+    SET_ANSWERS(state, answers) {
+      state.answers = answers
     }
   }
 }

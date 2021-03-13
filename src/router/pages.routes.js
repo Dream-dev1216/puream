@@ -59,9 +59,24 @@ export default [{
     admin: true
   }
 }, {
+  path: '/companies/:id/summary',
+  name: 'companies-summary',
+  component: () => import(/* webpackChunkName: "companies-summary" */ '@/pages/companies/Summary.vue'),
+  meta: {
+    layout: 'admin',
+    admin: true
+  }
+}, {
   path: '/',
   name: 'start-query',
   component: () => import(/* webpackChunkName: "start-query" */ '@/pages/due-diligence-query/StartPage.vue'),
+  meta: {
+    applicant: true
+  }
+}, {
+  path: '/due-diligence-query/summary',
+  name: 'due-diligence-query-summary',
+  component: () => import(/* webpackChunkName: "due-diligence-query-summary" */ '@/pages/due-diligence-query/Summary.vue'),
   meta: {
     applicant: true
   }

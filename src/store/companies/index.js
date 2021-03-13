@@ -35,7 +35,7 @@ const module = {
       try {
         const response = await companyAPI.getCompany(id)
 
-        commit('SET_COMPANY', response.data.data)
+        commit('SET_COMPANY', response.data.company)
       } catch (error) {
         throw new Error(err)
       }
@@ -65,6 +65,16 @@ const module = {
         dispatch('app/showSuccess', response.data.message, { root: true })
       } catch (error) {
         console.log(error)
+      }
+    },
+
+    async deleteCompany({ commit, dispatch }, id) {
+      try {
+        const response = await companyAPI.deleteCompany(id)
+
+        return response
+      } catch (error) {
+        throw new Error(error)
       }
     }
   },

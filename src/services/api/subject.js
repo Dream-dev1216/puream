@@ -36,7 +36,27 @@ export default {
     return api.get('/subjects/topics')
   },
 
+  /**
+  * Get all topics
+  *
+  * @param {}
+  * @example
+  *
+  *     getAllTopics()
+  */
+  getAllTopics() {
+    return api.get('/subjects/all-topics')
+  },
+
   getStartingPoint() {
     return api.get('/subjects/starting-point')
+  },
+
+  getAnswers() {
+    return api.get('/subjects/answers')
+  },
+
+  getCompanyAnswers(id) {
+    return api.get(`/subjects/company-answers/${id}`)
   }
 }

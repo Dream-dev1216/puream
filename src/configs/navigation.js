@@ -4,7 +4,7 @@ export default {
     text: '',
     key: '',
     items: [
-      { icon: 'mdi-account-multiple', text: 'Companies', link: '/companies' }
+      { icon: 'mdi-domain', text: 'Companies', link: '/companies' }
     ]
   }]
 }

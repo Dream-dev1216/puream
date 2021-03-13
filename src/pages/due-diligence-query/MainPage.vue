@@ -10,12 +10,11 @@
       <v-row v-if="!loadingSubject && subject" dense justify="center" class="py-4 mt-2">
         <v-col cols="12">
           <v-slider
-            :value="10"
-            ticks="always"
+            :value="progressed"
             readonly
             thumb-label="always"
             track-color="grey"
-            :max="31"
+            :max="100"
             :height="30"
           >
             <template v-slot:thumb-label="{ value }">
@@ -76,7 +75,7 @@
                     color="primary"
                     :loading="submittingAnswer"
                     :disabled="submittingAnswer"
-                    @click="saveAndReturnLater"
+                    @click="_saveAndReturnLatern"
                   >
                     Save and return later
                   </a>
@@ -107,7 +106,7 @@ export default {
   data() {
     return {
       isFormValid: true,
-      progressed: 30,
+
       form: {
         yes_no: '',
         fileInput: undefined,
@@ -117,7 +116,7 @@ export default {
   },
   computed: {
     ...mapState('subjects', ['loadingSubject', 'submittingAnswer', 'subject']),
-    
+
     visibleUpload() {
       if (this.subject.yes_no === false && this.subject.upload)
         return true
@@ -134,15 +133,32 @@ export default {
         return true
 
       return false
+    },
+
+    progressed() {
+      if (this.subject.is_public) {
+        return ((this.subject.id - 1) / 32 * 100)
+      } else {
+        return (this.subject.id - 32) / 37 * 100
+      }
     }
   },
   mounted() {
     this.getSubject(this.$route.params.id)
   },
   methods: {
-    ...mapActions('subjects', ['getSubject', 'submitAnswer']),
-    saveAndReturnLater() {
+    ...mapActions('subjects', ['getSubject', 'submitAnswer', 'saveAndReturnLatern']),
+    _saveAndReturnLatern() {
+      if (this.$refs.form.validate()) {
+        const formData = new FormData()
 
+        formData.append('subject_id', this.$route.params.id)
+        formData.append('yes_no', this.form.yes_no)
+        formData.append('upload', this.form.fileInput)
+        formData.append('comment', this.form.comment)
+
+        this.saveAndReturnLatern(formData)
+      }
     },
     next() {
       if (this.$refs.form.validate()) {

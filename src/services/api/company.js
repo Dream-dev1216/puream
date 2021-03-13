@@ -50,5 +50,9 @@ export default {
   */
   updateCompany(payload) {
     return api.put(`/companies/${payload.id}`, payload)
+  },
+
+  deleteCompany(id) {
+    return api.delete(`/companies/${id}`)
   }
 }

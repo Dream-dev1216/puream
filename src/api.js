@@ -5,7 +5,7 @@ import router from './router'
 
 const API = axios.create({
   // baseURL: process.env.VUE_APP_SERVER_API_ENDPOINT || '/api',
-  baseURL: 'http://localhost/dd/public/api',
+  baseURL: 'https://puream.com.au/api',
   timeout: 150000
 })
 
