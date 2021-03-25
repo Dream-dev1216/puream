@@ -61,7 +61,7 @@ export default {
   data() {
     return {
       menu: [
-        { icon: 'mdi-account-box-outline', key: 'menu.profile', text: 'Profile' }
+        { icon: 'mdi-account-box-outline', key: 'menu.profile', text: 'Profile', link: '/profile' }
       ]
     }
   },

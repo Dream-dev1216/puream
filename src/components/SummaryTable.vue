@@ -22,6 +22,10 @@
               </div>
             </td>
           </template>
+
+          <template v-slot:item.upload="{ item }">
+            <a :href="item.upload">{{item.upload}}</a>
+          </template>
         </v-data-table>
       </v-card-text>
     </v-card>

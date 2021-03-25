@@ -87,4 +87,10 @@ export default [{
   meta: {
     applicant: true
   }
+}, {
+  path: '/profile',
+  name: 'profile',
+  component: () => import(/* webpackChunkName: "due-diligence-query" */ '@/pages/auth/Profile.vue'),
+  meta: {
+  }
 }]

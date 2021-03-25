@@ -5,7 +5,9 @@
       app
     >
       <div class="d-flex justify-space-between align-center container">
-        <img src="/images/logo.png" style="width: 160px;">
+        <a href="/">
+          <img src="/images/logo.png" style="width: 160px;">
+        </a>
         <v-spacer></v-spacer>
         <toolbar-user />
       </div>
