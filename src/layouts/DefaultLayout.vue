@@ -5,9 +5,9 @@
       app
     >
       <div class="d-flex justify-space-between align-center container">
-        <a href="/">
-          <img src="/images/logo.png" style="width: 160px;">
-        </a>
+         <router-link to="/">
+            <img src="/images/logo.png" style="width: 160px;">
+         </router-link>
         <v-spacer></v-spacer>
         <toolbar-user />
       </div>

@@ -13,9 +13,9 @@
       <!-- Navigation menu info -->
       <template v-slot:prepend>
         <div class="pa-2 text-center">
-          <a href="/">
+         <router-link to="/">
             <img src="/images/logo.png" style="width: 160px;">
-          </a>
+         </router-link>
         </div>
       </template>
 

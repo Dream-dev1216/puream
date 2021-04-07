@@ -25,6 +25,18 @@ export default {
   },
 
   /**
+  * Submit Company
+  *
+  * @param { id }
+  * @example
+  *
+  *     submitCompany()
+  */
+  submitCompany(id) {
+    return api.post(`/companies/submit/${id}`)
+  },
+
+  /**
   * Create a new company
   *
   * @param {Object}

@@ -76,6 +76,16 @@ const module = {
       } catch (error) {
         throw new Error(error)
       }
+    },
+
+    async submitCompany({ commit, state }, id) {
+      try {
+        const response = await companyAPI.submitCompany(id)
+
+        commit('SET_COMPANY', { ...state.company, is_completed: 1 })
+      } catch (error) {
+        throw new Error(error)
+      }
     }
   },
 

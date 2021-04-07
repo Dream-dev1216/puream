@@ -13,6 +13,7 @@ const module = {
     topics: [],
 
     loadingStartPoint: false,
+    startingPoint: '',
 
     answers: [],
     loadingAnswers: false
@@ -116,16 +117,9 @@ const module = {
         const response = await subjectAPI.getStartingPoint()
 
         if (response.data.completed) {
-          router.push({
-            name: 'due-diligence-query-summary'
-          })
+          commit('SET_STARTING_POINT', 'summary')
         } else {
-          router.push({
-            name: 'due-diligence-query',
-            params: {
-              id: response.data.subject_id
-            }
-          })
+          commit('SET_STARTING_POINT', response.data.subject_id)
         }
       } catch (error) {
         console.log(error.response)
@@ -196,6 +190,10 @@ const module = {
 
     SET_ANSWERS(state, answers) {
       state.answers = answers
+    },
+
+    SET_STARTING_POINT(state, id) {
+      state.startingPoint = id
     }
   }
 }

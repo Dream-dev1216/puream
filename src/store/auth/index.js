@@ -30,7 +30,7 @@ const module = {
 
       try {
         const response = await authAPI.signIn(email, password)
-        
+
         commit('SET_TOKEN', response.data.access_token)
 
         localStorage.setItem('token', response.data.access_token)
@@ -93,7 +93,7 @@ const module = {
       currentPassword, newPassword
     }) {
       commit('BUTTON_LOAD')
-      
+
       try {
         const response = await authAPI.updatePassword(currentPassword, newPassword)
 
@@ -111,10 +111,10 @@ const module = {
           })
         }
       }
-      
+
       commit('BUTTON_CLEAR')
     },
-    
+
     async requestForgotPassword({
       commit
     }, email) {
@@ -129,7 +129,25 @@ const module = {
           })
         }
       }
-      
+
+      commit('BUTTON_CLEAR')
+    },
+
+    async updateProfile({ commit, dispatch }, info) {
+      commit('BUTTON_LOAD')
+
+      try {
+        await authAPI.updateProfile(info)
+        dispatch('signOut')
+        dispatch('app/showSuccess', 'Profile Updated. Please login again', { root: true })
+      } catch (error) {
+        if (error.response.status === 404) {
+          commit('SET_ERROR', {
+            'error': error.response.data
+          })
+        }
+      }
+
       commit('BUTTON_CLEAR')
     }
   },
@@ -174,7 +192,7 @@ const module = {
     SET_LOADING_TIME_ZONE(state, loading) { state.loadingTimezone = loading },
     SET_UPDATING_TIME_ZONE(state, loading) { state.updatingTimezone = loading },
 
-    SET_TIMEZONES(state, timezones) { state.timeZoneNames = timezones},
+    SET_TIMEZONES(state, timezones) { state.timeZoneNames = timezones },
     SET_LOGO_FILE(state, logo) { state.user.companyLogo = logo },
     SET_AUTH_COMPANY(state, company) { state.user.company = company }
   },

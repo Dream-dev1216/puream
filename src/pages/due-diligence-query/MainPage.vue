@@ -118,18 +118,19 @@ export default {
     ...mapState('subjects', ['loadingSubject', 'submittingAnswer', 'subject']),
 
     visibleUpload() {
-      if (this.subject.yes_no === false && this.subject.upload)
+      console.log(this.subject)
+      if (this.subject.yes_no === 0 && this.subject.upload)
         return true
-      if ((this.form.yes_no === 'yes' && this.subject.truthy === true || this.subject.truthy === false && this.form.yes_no === 'no') && this.subject.upload)
+      if ((this.form.yes_no === 1 && this.subject.truthy === 1 || this.subject.truthy === 0 && this.form.yes_no === 0) && this.subject.upload)
         return true
 
       return false
     },
 
     visibleComment() {
-      if (this.subject.yes_no === false && this.subject.comment)
+      if (this.subject.yes_no === 0 && this.subject.comment)
         return true
-      if ((this.form.yes_no === 'yes' && this.subject.truthy === true || this.subject.truthy === false && this.form.yes_no === 'no') && this.subject.comment)
+      if ((this.form.yes_no === 0 && this.subject.truthy === 1 || this.subject.truthy === 0 && this.form.yes_no === 0) && this.subject.comment)
         return true
 
       return false
@@ -151,7 +152,7 @@ export default {
     _saveAndReturnLatern() {
       if (this.$refs.form.validate()) {
         const formData = new FormData()
-        
+
         formData.append('subject_id', this.$route.params.id)
         formData.append('yes_no', this.form.yes_no)
         formData.append('upload', this.form.fileInput)

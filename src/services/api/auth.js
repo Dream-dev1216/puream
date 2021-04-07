@@ -59,6 +59,19 @@ export default {
   },
 
   /**
+  * Send update profile request
+  *
+  * @example
+  *
+  *     updateProfile()
+  */
+  updateProfile(data) {
+    return api.post('/auth/profile', data).then((response) => {
+      return response
+    })
+  },
+
+  /**
   * Send sign out request
   *
   * @example

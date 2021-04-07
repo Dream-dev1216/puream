@@ -1,33 +1,37 @@
 <template>
   <div>
-    <v-card class="pa-12 mx-12 mt-12">
+    <v-card class="pa-12 mx-12 mt-12" width="600">
       <v-card-title class="justify-center display-1 mb-2">Profile</v-card-title>
 
       <!-- sign in form -->
       <v-card-text>
         <v-form ref="form" v-model="isFormValid" lazy-validation>
           <v-text-field
-            :value="user.name"
+            v-model="form.name"
             placeholder="User Name"
             name="username"
             label="Username"
+            :rules="nameRules"
             outlined
           ></v-text-field>
           <v-text-field
-            :value="user.email"
+            v-model="form.email"
             placeholder="Email"
             name="email"
             label="Email"
+            type="email"
+            :rules="emailRules"
             outlined
           ></v-text-field>
 
-          <v-text-field
-            :value="user.company != null ? user.company.name : ''"
-            placeholder="Company"
-            name="company"
+          <v-select
+            :items="companies"
             label="Company"
             outlined
-          ></v-text-field>
+            v-model="form.company"
+            item-text="name"
+            item-value="id"
+          ></v-select>
 
           <v-btn
             :loading="isLoading"
@@ -36,6 +40,7 @@
             color="primary"
             large
             class="mt-4"
+            @click="saveProfile"
           >Save</v-btn>
 
         </v-form>
@@ -62,8 +67,27 @@ export default {
     return {
       // form
       isFormValid: true,
-      email: '',
-      password: '',
+      nameRules: [
+        function(v) {
+          return !!v || 'Name is required'
+        },
+        function(v) {
+          return (v && v.length >= 5) || 'Name must be more than 5 characters'
+        }
+      ],
+      emailRules: [
+        function(v) {
+          return !!v || 'E-mail is required'
+        },
+        function(v) {
+          return /.+@.+\..+/.test(v) || 'E-mail must be valid'
+        }
+      ],
+      form: {
+        email: '',
+        password: '',
+        company: null
+      },
 
       // form error
       error: false,
@@ -78,13 +102,34 @@ export default {
   computed: {
     ...mapState({
       isLoading: (state) => state.auth.button_loading,
-      user: (state) => state.auth.user
-    })
+      user: (state) => state.auth.user,
+      companies: (state) => state.companies.companies,
+      loadingCompanies: (state) => state.companies.loadingCompanies
+    }),
+    companyItems() {
+      return [{
+        label: 'First',
+        value: 1
+      }]
+    }
   },
   mounted() {
-    console.log(this.user)
+    this.form.email = this.user.email
+    this.form.name = this.user.name
+    this.form.company = this.user.company_id
+    this.getCompanies()
   },
   methods: {
+    ...mapActions({
+      getCompanies: 'companies/getCompanies',
+      updateProfile: 'auth/updateProfile'
+    }),
+
+    saveProfile() {
+      if (!this.isFormValid)
+        return
+      this.updateProfile(this.form)
+    }
   }
 }
 </script>

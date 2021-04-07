@@ -18,8 +18,20 @@
             hide-default-footer
             :loading="loadingCompanies"
           >
-            <template v-slot:item.completed="{ item }">
-              <div>{{ item.completed ? 'Completed' : 'Confirm' }}</div>
+            <template v-slot:item.is_completed="{ item }">
+              <div>
+                <template v-if="item.is_completed == 1 || item.is_completed == '1'">
+                  Completed
+                </template>
+                <v-btn
+                  v-else
+                  depressed
+                  color="primary"
+                  @click="onConfirmClicked(item)"
+                >
+                  Confirm
+                </v-btn>
+              </div>
             </template>
             <template v-slot:item.action="{ item }">
               <div class="actions">
@@ -68,6 +80,42 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <v-dialog
+          v-model="completeDialog"
+          width="500"
+        >
+          <v-card>
+            <v-card-title class="grey lighten-2">
+              Confirm
+            </v-card-title>
+
+            <v-card-text>
+              <div class="text-center py-2">Are you sure?</div>
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="primary"
+                text
+                @click="completeDialog = false"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                color="primary"
+                :disabled="completingCompany"
+                :loading="completingCompany"
+                @click="confirmCompleteCompany"
+              >
+                Complete
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-col>
     </v-row>
   </div>
@@ -80,12 +128,16 @@ export default {
     return {
       headers: [
         { text: 'Company Name', value: 'name' },
-        { text: 'Completed', value: 'completed' },
+        { text: 'DD Completed', value: 'is_completed' },
         { text: 'Actions', sortable: false, align: 'right', value: 'action' }
       ],
       confirmDelDialog: false,
       index: -1,
-      deletingCompany: false
+      deletingCompany: false,
+
+      completeIndex: -1,
+      completeDialog: false,
+      completingCompany: false
     }
   },
   computed: {
@@ -100,7 +152,8 @@ export default {
   methods: {
     ...mapActions({
       getCompanies: 'companies/getCompanies',
-      deleteCompany: 'companies/deleteCompany'
+      deleteCompany: 'companies/deleteCompany',
+      updateCompany: 'companies/updateCompany'
     }),
 
     gotoSummary(id) {
@@ -110,6 +163,29 @@ export default {
           id
         }
       })
+    },
+
+    onConfirmClicked(item) {
+      this.completeIndex = item.id
+      this.completeDialog = true
+    },
+
+    async confirmCompleteCompany() {
+      this.completingCompany = true
+
+      try {
+        const response = await this.updateCompany({
+          id: this.completeIndex,
+          is_completed: true
+        })
+
+        this.completeDialog = false
+        this.getCompanies()
+      } catch (err) {
+        console.log(err)
+      } finally {
+        this.completingCompany = false
+      }
     },
 
     onDeleteClicked(item) {

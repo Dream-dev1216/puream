@@ -6,18 +6,29 @@
 
     <v-row dense justify="center">
       <v-col cols="12" md="6">
-        <div class="d-flex align-center">
+        <div class="d-flex justify-space-between">
+          
           <v-btn
             color="primary"
-            @click="getStartingPoint"
             :loading="loadingStartPoint"
             :disabled="loadingStartPoint"
+            :to="'/due-diligence-query/'+startingPoint"
           >
-            Start/Resume
+            {{ startingPoint == 'summary' ? 'Review Submission' : 'Start/Resume' }}
+          </v-btn>
+          <v-btn
+            v-if="!myCompany.is_completed"
+            color="success"
+            :loading="loadingStartPoint"
+            :disabled="loadingStartPoint"
+            @click="submitAll"
+          >
+            Submit
           </v-btn>
         </div>
 
         <v-data-table
+          ref="expandableTable"
           :headers="headers"
           :items="answers"
           :loading="loadingAnswers && loadingTopics"
@@ -25,8 +36,8 @@
           show-group-by
           hide-default-footer
           :items-per-page="40"
-          ref="expandableTable"
         >
+        
           <template v-slot:group.header="{ group, headers, toggle, isOpen }">
             <td :colspan="headers.length">
               <div class="d-flex align-center">
@@ -62,13 +73,21 @@
                   </v-icon>
                   Incomplete
                 </v-chip>
-                <v-btn icon>
-                  <v-icon>
-                    mdi-pencil
-                  </v-icon>
-                </v-btn>
               </div>
             </td>
+          </template>
+
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              v-if="!myCompany.is_completed"
+              small
+              outlined
+              fab
+              color="indigo"
+              @click="editItem(item)"
+            >
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
           </template>
           <template #item.upload="{ value }">
             <a v-if="value" :href="`${value}`" target="_blank">
@@ -76,6 +95,18 @@
             </a>
           </template>
         </v-data-table>
+        
+        <div class="d-flex flex-row-reverse">
+          <v-btn
+            v-if="!myCompany.is_completed"
+            color="success"
+            :loading="loadingStartPoint"
+            :disabled="loadingStartPoint"
+            @click="submitAll"
+          >
+            Submit
+          </v-btn>
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -83,6 +114,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
+import { router } from 'vue'
 
 export default {
   data() {
@@ -92,7 +124,8 @@ export default {
         { text: 'Yes/No', align: 'left', value: 'yes_no', sortable: false },
         { text: 'Upload', align: 'left', value: 'upload', sortable: false },
         { text: 'Comment', align: 'left', value: 'comment', sortable: false },
-        { text: 'Category', align: 'left', value: 'category_id', sortable: false }
+        { text: 'Category', align: 'left', value: 'category_id', sortable: false },
+        { text: 'Actions', value: 'actions', sortable: false }
       ],
       expanded: [],
       dataReady: false
@@ -100,6 +133,9 @@ export default {
   },
   computed: {
     ...mapState({
+      user: (state) => state.auth.user,
+      myCompany: (state) => state.companies.company,
+      startingPoint: (state) => state.subjects.startingPoint,
       topics: (state) => state.subjects.topics,
       answers: (state) => state.subjects.answers,
       loadingAnswers: (state) => state.subjects.loadingAnswers,
@@ -110,12 +146,13 @@ export default {
   async mounted() {
     await this.getTopics()
     await this.getAnswers()
-    this.dataReady = true
+    await this.getCompany(this.user.company_id)
+    await this.getStartingPoint()
     this.collapseAll()
+    this.dataReady = true
   },
   methods: {
     collapseAll() {
-
       for (const name of Object.keys(this.$refs.expandableTable.openCache)) {
         
         this.$refs.expandableTable.openCache[name] = false
@@ -131,7 +168,14 @@ export default {
 
       return answer ? answer.completed : ''
     },
-    ...mapActions('subjects', ['getTopics', 'getStartingPoint', 'getAnswers'])
+    editItem(item) {
+      this.$router.push('due-diligence-query/' + item.subject_id)
+    },
+    submitAll() {
+      this.submitCompany(this.user.company_id)
+    },
+    ...mapActions('subjects', ['getTopics', 'getStartingPoint', 'getAnswers']),
+    ...mapActions('companies', ['getCompany', 'submitCompany'])
   }
 }
 </script>
