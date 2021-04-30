@@ -25,7 +25,9 @@
 
           <template v-slot:item.upload="{ item }">
             <p v-for="(link, index) in item.upload" :key="index">
-              <a :href="link">{{link}}</a>
+              <a
+                :href="link" 
+                target="_blank">{{link}}</a>
             </p>
           </template>
         </v-data-table>

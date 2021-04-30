@@ -1,5 +1,24 @@
 <template>
   <div class="d-flex flex-column flex-grow-1">
+    <div class="display-1 my-2">
+      <v-btn
+        color="success"
+        :loading="loadingStartPoint"
+        :disabled="!myCompany || myCompany.is_completed || loadingStartPoint"
+        @click="submitAll"
+      >
+        Submit
+      </v-btn>
+      <router-link to="/">
+        <v-btn
+          class="ml-3"
+          color="primary"
+        >
+          Back
+        </v-btn>
+      </router-link>
+    </div>
+
     <summary-table
       :loading="loadingAnswers"
       title="Due Diligence Summary"
@@ -29,19 +48,29 @@ export default {
 
   computed: {
     ...mapState({
+      user: (state) => state.auth.user,
       answers: (state) => state.subjects.answers,
-      loadingAnswers: (state) => state.subjects.loadingAnswers
+      loadingAnswers: (state) => state.subjects.loadingAnswers,
+      myCompany: (state) => state.companies.company,
+      loadingStartPoint: (state) => state.subjects.loadingStartPoint
     })
   },
 
-  mounted() {
+  async mounted() {
     this.getAnswers()
+    await this.getCompany(this.user.company_id)
   },
 
   methods: {
     ...mapActions({
       getAnswers: 'subjects/getAnswers'
-    })
+    }),
+
+    ...mapActions('companies', ['submitCompany', 'getCompany']),
+
+    submitAll() {
+      this.submitCompany(this.user.company_id)
+    }
   }
 }
 </script>

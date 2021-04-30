@@ -24,15 +24,6 @@
             outlined
           ></v-text-field>
 
-          <v-select
-            :items="companies"
-            label="Company"
-            outlined
-            v-model="form.company"
-            item-text="name"
-            item-value="id"
-          ></v-select>
-
           <v-btn
             :loading="isLoading"
             :disabled="isLoading"

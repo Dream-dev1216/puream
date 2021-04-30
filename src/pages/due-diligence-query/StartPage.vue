@@ -17,7 +17,7 @@
             {{ startingPoint == 'summary' ? 'Review Submission' : 'Start/Resume' }}
           </v-btn>
           <v-btn
-            v-if="!myCompany.is_completed"
+            v-if="myCompany && !myCompany.is_completed"
             color="success"
             :loading="loadingStartPoint"
             :disabled="loadingStartPoint"
@@ -97,7 +97,7 @@
         
         <div class="d-flex flex-row-reverse">
           <v-btn
-            v-if="!myCompany.is_completed"
+            v-if="myCompany && !myCompany.is_completed"
             color="success"
             :loading="loadingStartPoint"
             :disabled="loadingStartPoint"
