@@ -37,19 +37,44 @@
               <v-form ref="managerForm" v-model="isManagerFormValid" lazy-validation @submit.prevent="">
                 <div v-for="(manager, i) in managers" :key="i">
                   <v-text-field
+                    v-model="manager.first_name"
+                    :rules="[$rules.required]"
+                    dense
+                    outlined
+                    placeholder="Manager First Name"
+                  >
+                  </v-text-field>
+                  <v-text-field
+                    v-model="manager.last_name"
+                    :rules="[$rules.required]"
+                    dense
+                    outlined
+                    placeholder="Manager Last Name"
+                  >
+                  </v-text-field>
+                  <!-- <v-text-field
                     v-model="manager.name"
                     :rules="[$rules.required]"
                     dense
                     outlined
                     placeholder="Manager Name"
                   >
-                  </v-text-field>
+                  </v-text-field> -->
                   <v-text-field
                     v-model="manager.email"
                     :rules="[$rules.required, $rules.emailFormat]"
                     dense
                     outlined
-                    placeholder="Manager email"
+                    placeholder="Manager Email"
+                  >
+                  </v-text-field>
+                  <v-text-field
+                    v-model="manager.mobile"
+                    :rules="[$rules.required]"
+                    dense
+                    outlined
+                    placeholder="Manager Mobile Number"
+                    @keypress="onlyNumber"
                   >
                   </v-text-field>
 
@@ -57,19 +82,44 @@
                 </div>
                 <div>
                   <v-text-field
+                    v-model="managerForm.first_name"
+                    :rules="[$rules.required]"
+                    dense
+                    outlined
+                    placeholder="Manager First Name"
+                  >
+                  </v-text-field>
+                  <v-text-field
+                    v-model="managerForm.last_name"
+                    :rules="[$rules.required]"
+                    dense
+                    outlined
+                    placeholder="Manager Last Name"
+                  >
+                  </v-text-field>
+                  <!-- <v-text-field
                     v-model="managerForm.name"
                     :rules="[$rules.required]"
                     dense
                     outlined
                     placeholder="Manager Name"
                   >
-                  </v-text-field>
+                  </v-text-field> -->
                   <v-text-field
                     v-model="managerForm.email"
                     :rules="[$rules.required, $rules.emailFormat]"
                     dense
                     outlined
-                    placeholder="Manager email"
+                    placeholder="Manager Email"
+                  >
+                  </v-text-field>
+                  <v-text-field
+                    v-model="managerForm.mobile"
+                    :rules="[$rules.required]"
+                    dense
+                    outlined
+                    placeholder="Manager Mobile Number"
+                    @keypress="onlyNumber"
                   >
                   </v-text-field>
                 </div>
@@ -105,6 +155,9 @@ export default {
 
       managerForm: {
         name: '',
+        first_name: '',
+        last_name: '',
+        mobile: '',
         email: ''
       },
 
@@ -123,12 +176,21 @@ export default {
   mounted() {
   },
   methods: {
+    onlyNumber ($event) {
+      console.log($event.keyCode) //keyCodes value
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+        $event.preventDefault()
+      }
+    },
     ...mapActions({
       createCompany: 'companies/createCompany'
     }),
     submit() {
       if (this.$refs.companyForm.validate()) {
         if (this.$refs.managerForm.validate()) {
+          this.managerForm.name = this.managerForm.first_name + ' ' + this.managerForm.last_name
           const managers = this.managers.concat([this.managerForm])
 
           this.createCompany({
@@ -145,6 +207,9 @@ export default {
         this.managers.push(this.managerForm)
         this.managerForm = {
           name: '',
+          first_name: '',
+          last_name: '',
+          mobile: '',
           email: ''
         }
         this.$refs.managerForm.resetValidation()
