@@ -200,7 +200,24 @@ export default {
       this.saveAndReturnLatern()
     },
     next() {
-      if (this.$refs.form.validate()) {
+      if (this.subject.subject === 'Working Capital' && this.form.comment || this.form.fileInput ) {
+        const formData = new FormData()
+
+        formData.append('subject_id', this.$route.params.id)
+        formData.append('yes_no', this.form.yes_no)
+        if (this.form.fileInput && this.form.fileInput.length)
+        {
+          formData.append('uploadcnt', this.form.fileInput.length)
+          this.form.fileInput.forEach((file, index) => {
+            formData.append('upload' + index, file)
+          })
+        }
+        formData.append('comment', this.form.comment)
+
+        this.submitAnswer(formData)
+      }
+
+      else if (this.$refs.form.validate()) {
         const formData = new FormData()
 
         formData.append('subject_id', this.$route.params.id)
